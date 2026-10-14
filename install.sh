@@ -51,12 +51,15 @@ echo "安装 koubo-pipeline -> $SKILLS_DIR"
 link koubo-pipeline "$HERE"
 
 echo "安装 dbskill 子集（CC BY-NC 4.0）"
-clone dbskill https://github.com/dontbesilent2025/dbskill
-for s in $DBS_SKILLS; do link "$s" "$SRC_DIR/dbskill/skills/$s"; done
+for s in $DBS_SKILLS; do
+  [ -e "$SKILLS_DIR/$s" ] || clone dbskill https://github.com/dontbesilent2025/dbskill
+  link "$s" "$SRC_DIR/dbskill/skills/$s"
+done
 
 echo "安装其他依赖"
 while IFS='|' read -r name repo sub; do
-  clone "$name" "$repo"; link "$name" "$SRC_DIR/$name${sub:+/$sub}"
+  [ -e "$SKILLS_DIR/$name" ] || clone "$name" "$repo"
+  link "$name" "$SRC_DIR/$name${sub:+/$sub}"
 done <<< "$STANDALONE"
 
 echo "完成。新开一个 Claude Code 会话，说「写一条口播」即可触发。"
